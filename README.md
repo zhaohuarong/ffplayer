@@ -1,6 +1,8 @@
 # ffplayer
 VLC-Qt player
 
+https://vlc-qt.tano.si/
+
 一个基于VLC-Qt的简单播放器，具备以下几个特殊的功能
 
 **●可以接受命令行的参数**
