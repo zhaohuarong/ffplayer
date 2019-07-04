@@ -21,6 +21,7 @@ public:
 
 protected:
     void keyReleaseEvent(QKeyEvent *e);
+    void contextMenuEvent(QContextMenuEvent *e);
 
 private slots:
     void onOpenFile();

@@ -1,3 +1,5 @@
+#include <QDebug>
+#include <QMenu>
 #include <QKeyEvent>
 #include <QMessageBox>
 #include <QFileDialog>
@@ -19,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_bIsMaximized(false)
 {
     ui->setupUi(this);
+
+    setContextMenuPolicy(Qt::DefaultContextMenu);
 
     _instance = new VlcInstance(VlcCommon::args(), this);
     _player = new VlcMediaPlayer(_instance);
@@ -60,6 +64,14 @@ void MainWindow::keyReleaseEvent(QKeyEvent *e)
         onFullScreen();
         break;
     }
+}
+
+void MainWindow::contextMenuEvent(QContextMenuEvent *e)
+{
+    Q_UNUSED(e);
+    QMenu contextMenu(this);
+    contextMenu.addAction(ui->action_Full_Screen);
+    contextMenu.exec(QCursor::pos());
 }
 
 void MainWindow::onOpenFile()
