@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->action_Full_Screen->setIcon(QIcon(":/img/full_screen.png"));
     ui->action_Exit->setIcon(QIcon(":/img/exit.png"));
     ui->action_About->setIcon(QIcon(":/img/about.png"));
+    ui->action_Grab->setIcon(QIcon(":/img/grab.png"));
 
     ui->video->setMediaPlayer(m_pPlayer);
     ui->volume->setMediaPlayer(m_pPlayer);
@@ -43,11 +44,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->mainToolBar->addAction(ui->action_Open);
     ui->mainToolBar->addAction(ui->action_Full_Screen);
+    ui->mainToolBar->addAction(ui->action_Grab);
 
     connect(ui->action_Open, SIGNAL(triggered()), this, SLOT(onOpenFile()));
     connect(ui->action_Full_Screen, SIGNAL(triggered()), this, SLOT(onFullScreen()));
     connect(ui->action_About, SIGNAL(triggered()), this, SLOT(onAbout()));
     connect(ui->action_Exit, SIGNAL(triggered()), this, SLOT(close()));
+    connect(ui->action_Grab, SIGNAL(triggered()), this, SLOT(onGrabImage()));
 }
 
 MainWindow::~MainWindow()
@@ -91,7 +94,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent *e)
         forward(10 * 1000);
         break;
     case Qt::Key_1:
-        grabImage(m_pPlayer->position() * m_pMedia->duration() / 1000);
+        onGrabImage();
         break;
     }
 }
@@ -101,6 +104,7 @@ void MainWindow::contextMenuEvent(QContextMenuEvent *e)
     Q_UNUSED(e);
     QMenu contextMenu(this);
     contextMenu.addAction(ui->action_Full_Screen);
+    contextMenu.addAction(ui->action_Grab);
     contextMenu.exec(QCursor::pos());
 }
 
@@ -153,6 +157,11 @@ void MainWindow::onAbout()
     box.exec();
 }
 
+void MainWindow::onGrabImage()
+{
+    grabImage(m_pPlayer->position() * m_pMedia->duration() / 1000);
+}
+
 void MainWindow::backward(int ms)
 {
     float delta = (float)ms / m_pMedia->duration();
@@ -167,8 +176,8 @@ void MainWindow::forward(int ms)
 
 void MainWindow::grabImage(int s)
 {
-    QString strDirPath = QFileInfo(m_strFileName).dir().absolutePath();
-    QString cmd = QString("ffmpeg -i %1 -r 1 -ss %2 %3.jpg").arg(m_strFileName).arg(s).arg(strDirPath + "/" + QDateTime::currentDateTime().toString("yyyy-MM-dd_HH-mm-ss"));
+    QString strImagePath = QFileInfo(m_strFileName).dir().absolutePath()  + "/" + QDateTime::currentDateTime().toString("yyyy-MM-dd_HH-mm-ss");
+    QString cmd = QString("ffmpeg -i %1 -r 1 -ss %2 %3.jpg").arg(m_strFileName).arg(s).arg(strImagePath);
     qDebug() << "cmd :" << cmd;
     QProcess p;
     p.start("cmd", QStringList() << "/c" << cmd);
@@ -178,5 +187,9 @@ void MainWindow::grabImage(int s)
     if(!strTemp.isEmpty())
     {
         QMessageBox::warning(this, tr("warning"), strTemp);
+    }
+    else
+    {
+        statusBar()->showMessage(tr("Grab success, saved %1").arg(strImagePath));
     }
 }

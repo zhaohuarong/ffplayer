@@ -4,5 +4,6 @@
         <file>img/full_screen.png</file>
         <file>img/exit.png</file>
         <file>img/about.png</file>
+        <file>img/grab.png</file>
     </qresource>
 </RCC>

@@ -31,6 +31,7 @@ private slots:
     void onOpenFile();
     void onFullScreen();
     void onAbout();
+    void onGrabImage();
 
 private:
     void backward(int ms);
