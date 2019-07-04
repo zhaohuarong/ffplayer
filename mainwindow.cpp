@@ -1,3 +1,4 @@
+#include <QKeyEvent>
 #include <QMessageBox>
 #include <QFileDialog>
 
@@ -14,7 +15,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow),
     _instance(nullptr),
     _media(nullptr),
-    _player(nullptr)
+    _player(nullptr),
+    m_bIsMaximized(false)
 {
     ui->setupUi(this);
 
@@ -50,6 +52,16 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::keyReleaseEvent(QKeyEvent *e)
+{
+    switch(e->key())
+    {
+    case Qt::Key_F:
+        onFullScreen();
+        break;
+    }
+}
+
 void MainWindow::onOpenFile()
 {
     QString strFileName = QFileDialog::getOpenFileName(this, tr("Select file"), qApp->applicationFilePath());
@@ -62,6 +74,23 @@ void MainWindow::onOpenFile()
 
 void MainWindow::onFullScreen()
 {
+    if(isFullScreen())
+    {
+        ui->mainToolBar->show();
+        ui->menuBar->show();
+        ui->seek->show();
+        statusBar()->show();
+        m_bIsMaximized ? showMaximized() : showNormal();
+    }
+    else
+    {
+        m_bIsMaximized = isMaximized();
+        ui->mainToolBar->hide();
+        ui->menuBar->hide();
+        ui->seek->hide();
+        statusBar()->hide();
+        showFullScreen();
+    }
 }
 
 void MainWindow::onAbout()

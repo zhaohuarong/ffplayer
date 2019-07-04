@@ -19,6 +19,9 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+protected:
+    void keyReleaseEvent(QKeyEvent *e);
+
 private slots:
     void onOpenFile();
     void onFullScreen();
@@ -30,6 +33,7 @@ private:
     VlcInstance *_instance;
     VlcMedia *_media;
     VlcMediaPlayer *_player;
+    bool m_bIsMaximized;
 };
 
 #endif // MAINWINDOW_H
