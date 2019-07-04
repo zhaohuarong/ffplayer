@@ -22,6 +22,7 @@ public:
 protected:
     void keyReleaseEvent(QKeyEvent *e);
     void contextMenuEvent(QContextMenuEvent *e);
+    void mouseDoubleClickEvent(QMouseEvent *e);
 
 private slots:
     void onOpenFile();
@@ -29,11 +30,15 @@ private slots:
     void onAbout();
 
 private:
+    void backward(int ms);
+    void forward(int ms);
+
+private:
     Ui::MainWindow *ui;
 
-    VlcInstance *_instance;
-    VlcMedia *_media;
-    VlcMediaPlayer *_player;
+    VlcInstance *m_pInstance;
+    VlcMedia *m_pMedia;
+    VlcMediaPlayer *m_pPlayer;
     bool m_bIsMaximized;
 };
 
