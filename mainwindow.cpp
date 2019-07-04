@@ -90,7 +90,7 @@ void MainWindow::onFullScreen()
     {
         ui->mainToolBar->show();
         ui->menuBar->show();
-        ui->seek->show();
+        //ui->seek->show();
         statusBar()->show();
         m_bIsMaximized ? showMaximized() : showNormal();
     }
@@ -99,7 +99,7 @@ void MainWindow::onFullScreen()
         m_bIsMaximized = isMaximized();
         ui->mainToolBar->hide();
         ui->menuBar->hide();
-        ui->seek->hide();
+        //ui->seek->hide();
         statusBar()->hide();
         showFullScreen();
     }
