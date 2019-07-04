@@ -70,6 +70,9 @@
     </property>
     <addaction name="action_Full_Screen"/>
     <addaction name="action_Grab"/>
+    <addaction name="actionClip_Left"/>
+    <addaction name="actionClip_Right"/>
+    <addaction name="action_Clip"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -113,6 +116,21 @@
   <action name="action_Grab">
    <property name="text">
     <string>&amp;Grab</string>
+   </property>
+  </action>
+  <action name="actionClip_Left">
+   <property name="text">
+    <string>Clip &amp;Left</string>
+   </property>
+  </action>
+  <action name="actionClip_Right">
+   <property name="text">
+    <string>Clip &amp;Right</string>
+   </property>
+  </action>
+  <action name="action_Clip">
+   <property name="text">
+    <string>&amp;Clip</string>
    </property>
   </action>
  </widget>

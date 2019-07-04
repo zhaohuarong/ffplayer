@@ -32,6 +32,9 @@ private slots:
     void onFullScreen();
     void onAbout();
     void onGrabImage();
+    void onClipLeft();
+    void onClipRight();
+    void onClip();
 
 private:
     void backward(int ms);
@@ -46,6 +49,8 @@ private:
     VlcMediaPlayer *m_pPlayer;
     bool m_bIsMaximized;
     QString m_strFileName;
+    int m_clipStartSecond;
+    int m_clipEndSecond;
 };
 
 #endif // MAINWINDOW_H

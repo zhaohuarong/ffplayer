@@ -20,7 +20,9 @@ MainWindow::MainWindow(QWidget *parent) :
     m_pInstance(nullptr),
     m_pMedia(nullptr),
     m_pPlayer(nullptr),
-    m_bIsMaximized(false)
+    m_bIsMaximized(false),
+    m_clipStartSecond(0),
+    m_clipEndSecond(0)
 {
     ui->setupUi(this);
 
@@ -35,6 +37,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->action_Exit->setIcon(QIcon(":/img/exit.png"));
     ui->action_About->setIcon(QIcon(":/img/about.png"));
     ui->action_Grab->setIcon(QIcon(":/img/grab.png"));
+    ui->actionClip_Left->setIcon(QIcon(":/img/clip_left.png"));
+    ui->actionClip_Right->setIcon(QIcon(":/img/clip_right.png"));
+    ui->action_Clip->setIcon(QIcon(":/img/clip.png"));
 
     ui->video->setMediaPlayer(m_pPlayer);
     ui->volume->setMediaPlayer(m_pPlayer);
@@ -45,12 +50,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->mainToolBar->addAction(ui->action_Open);
     ui->mainToolBar->addAction(ui->action_Full_Screen);
     ui->mainToolBar->addAction(ui->action_Grab);
+    ui->mainToolBar->addAction(ui->actionClip_Left);
+    ui->mainToolBar->addAction(ui->actionClip_Right);
+    ui->mainToolBar->addAction(ui->action_Clip);
 
     connect(ui->action_Open, SIGNAL(triggered()), this, SLOT(onOpenFile()));
     connect(ui->action_Full_Screen, SIGNAL(triggered()), this, SLOT(onFullScreen()));
     connect(ui->action_About, SIGNAL(triggered()), this, SLOT(onAbout()));
     connect(ui->action_Exit, SIGNAL(triggered()), this, SLOT(close()));
     connect(ui->action_Grab, SIGNAL(triggered()), this, SLOT(onGrabImage()));
+    connect(ui->actionClip_Left, SIGNAL(triggered()), this, SLOT(onClipLeft()));
+    connect(ui->actionClip_Right, SIGNAL(triggered()), this, SLOT(onClipRight()));
+    connect(ui->action_Clip, SIGNAL(triggered()), this, SLOT(onClip()));
 }
 
 MainWindow::~MainWindow()
@@ -96,6 +107,12 @@ void MainWindow::keyReleaseEvent(QKeyEvent *e)
     case Qt::Key_1:
         onGrabImage();
         break;
+    case Qt::Key_Comma:
+        onClipLeft();
+        break;
+    case Qt::Key_Period:
+        onClipRight();
+        break;
     }
 }
 
@@ -105,6 +122,9 @@ void MainWindow::contextMenuEvent(QContextMenuEvent *e)
     QMenu contextMenu(this);
     contextMenu.addAction(ui->action_Full_Screen);
     contextMenu.addAction(ui->action_Grab);
+    contextMenu.addAction(ui->actionClip_Left);
+    contextMenu.addAction(ui->actionClip_Right);
+    contextMenu.addAction(ui->action_Clip);
     contextMenu.exec(QCursor::pos());
 }
 
@@ -162,6 +182,46 @@ void MainWindow::onGrabImage()
     grabImage(m_pPlayer->position() * m_pMedia->duration() / 1000);
 }
 
+void MainWindow::onClipLeft()
+{
+    m_clipStartSecond = m_pPlayer->position() * m_pMedia->duration() / 1000;
+    qDebug() << "<<<<<<<<<<<<<" << QTime(0, 0, 0).addSecs(m_clipStartSecond);
+}
+
+void MainWindow::onClipRight()
+{
+    m_clipEndSecond = m_pPlayer->position() * m_pMedia->duration() / 1000;
+    qDebug() << ">>>>>>>>>>>>>" << QTime(0, 0, 0).addSecs(m_clipEndSecond);
+}
+
+void MainWindow::onClip()
+{
+    QString strStartTime = QTime(0, 0, 0).addSecs(m_clipStartSecond).toString("HH:mm:ss");
+    QString strEndTime = QTime(0, 0, 0).addSecs(m_clipEndSecond).toString("HH:mm:ss");
+
+    QMessageBox box(this);
+    box.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    box.setText(tr("[%1, %2]").arg(strStartTime).arg(strEndTime));
+    if(box.exec() == QMessageBox::Ok)
+    {
+        QString strOutName = QFileInfo(m_strFileName).absoluteDir().absolutePath() + "/out." + QFileInfo(m_strFileName).suffix();
+        QString cmd = QString("ffmpeg -i %1 -vcodec copy -acodec copy -ss %2 -to %3 %4 -y").arg(m_strFileName).arg(strStartTime).arg(strEndTime).arg(strOutName);
+        qDebug() << "====" << cmd;
+
+        QMessageBox testMassage;
+        testMassage.setText(cmd);
+        testMassage.show();
+        qApp->processEvents();
+
+        QProcess p;
+        p.start("cmd", QStringList() << "/c" << cmd);
+        p.waitForStarted();
+        p.waitForFinished();
+        //QString strTemp=QString::fromLocal8Bit(p.readAllStandardOutput());
+    }
+
+}
+
 void MainWindow::backward(int ms)
 {
     float delta = (float)ms / m_pMedia->duration();
@@ -176,8 +236,8 @@ void MainWindow::forward(int ms)
 
 void MainWindow::grabImage(int s)
 {
-    QString strImagePath = QFileInfo(m_strFileName).dir().absolutePath()  + "/" + QDateTime::currentDateTime().toString("yyyy-MM-dd_HH-mm-ss");
-    QString cmd = QString("ffmpeg -i %1 -r 1 -ss %2 %3.jpg").arg(m_strFileName).arg(s).arg(strImagePath);
+    QString strImagePath = QFileInfo(m_strFileName).dir().absolutePath()  + "/" + QDateTime::currentDateTime().toString("yyyy-MM-dd_HH-mm-ss") + ".jpg";
+    QString cmd = QString("ffmpeg -i %1 -r 1 -ss %2 %3").arg(m_strFileName).arg(s).arg(strImagePath);
     qDebug() << "cmd :" << cmd;
     QProcess p;
     p.start("cmd", QStringList() << "/c" << cmd);

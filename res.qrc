@@ -5,5 +5,8 @@
         <file>img/exit.png</file>
         <file>img/about.png</file>
         <file>img/grab.png</file>
+        <file>img/clip_left.png</file>
+        <file>img/clip_right.png</file>
+        <file>img/clip.png</file>
     </qresource>
 </RCC>
