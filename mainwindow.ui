@@ -41,7 +41,7 @@
      <widget class="VlcWidgetVolumeSlider" name="volume" native="true"/>
     </item>
     <item>
-     <widget class="VlcWidgetSeek" name="seek" native="true"/>
+     <widget class="VlcWidgetSeekProgress" name="seek" native="true"/>
     </item>
    </layout>
   </widget>
@@ -116,15 +116,15 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>VlcWidgetSeek</class>
-   <extends>QWidget</extends>
-   <header location="global">VLCQtWidgets/WidgetSeek.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>VlcWidgetVolumeSlider</class>
    <extends>QWidget</extends>
    <header location="global">VLCQtWidgets/WidgetVolumeSlider.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>VlcWidgetSeekProgress</class>
+   <extends>QWidget</extends>
+   <header location="global">VLCQtWidgets/WidgetSeekProgress.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
