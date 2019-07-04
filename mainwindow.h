@@ -35,6 +35,7 @@ private slots:
 private:
     void backward(int ms);
     void forward(int ms);
+    void grabImage(int s);
 
 private:
     Ui::MainWindow *ui;
@@ -43,6 +44,7 @@ private:
     VlcMedia *m_pMedia;
     VlcMediaPlayer *m_pPlayer;
     bool m_bIsMaximized;
+    QString m_strFileName;
 };
 
 #endif // MAINWINDOW_H

@@ -1,3 +1,5 @@
+#include <QDateTime>
+#include <QProcess>
 #include <QDebug>
 #include <QMenu>
 #include <QKeyEvent>
@@ -63,6 +65,7 @@ void MainWindow::openFile(const QString &strFilePath)
         delete m_pMedia;
         m_pMedia = nullptr;
     }
+    m_strFileName = strFilePath;
     m_pMedia = new VlcMedia(strFilePath, true, m_pInstance);
     m_pPlayer->open(m_pMedia);
     statusBar()->showMessage(strFilePath);
@@ -75,11 +78,20 @@ void MainWindow::keyReleaseEvent(QKeyEvent *e)
     case Qt::Key_F:
         onFullScreen();
         break;
+    case Qt::Key_Q:
+        close();
+        break;
+    case Qt::Key_Space:
+        m_pPlayer->togglePause();
+        break;
     case Qt::Key_Left:
         backward(10 * 1000);
         break;
     case Qt::Key_Right:
         forward(10 * 1000);
+        break;
+    case Qt::Key_1:
+        grabImage(m_pPlayer->position() * m_pMedia->duration() / 1000);
         break;
     }
 }
@@ -151,4 +163,20 @@ void MainWindow::forward(int ms)
 {
     float delta = (float)ms / m_pMedia->duration();
     m_pPlayer->setPosition(m_pPlayer->position() + delta);
+}
+
+void MainWindow::grabImage(int s)
+{
+    QString strDirPath = QFileInfo(m_strFileName).dir().absolutePath();
+    QString cmd = QString("ffmpeg -i %1 -r 1 -ss %2 %3.jpg").arg(m_strFileName).arg(s).arg(strDirPath + "/" + QDateTime::currentDateTime().toString("yyyy-MM-dd_HH-mm-ss"));
+    qDebug() << "cmd :" << cmd;
+    QProcess p;
+    p.start("cmd", QStringList() << "/c" << cmd);
+    p.waitForStarted();
+    p.waitForFinished();
+    QString strTemp = QString::fromLocal8Bit(p.readAllStandardOutput());
+    if(!strTemp.isEmpty())
+    {
+        QMessageBox::warning(this, tr("warning"), strTemp);
+    }
 }
