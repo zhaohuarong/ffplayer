@@ -10,7 +10,8 @@
 *.dylib
 debug
 release
-bin/*exe
+bin/plugins
+bin/*.exe
 
 # Qt-es
 object_script.*.Release

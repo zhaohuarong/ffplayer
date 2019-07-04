@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>img/open.png</file>
+        <file>img/full_screen.png</file>
+        <file>img/exit.png</file>
+        <file>img/about.png</file>
+    </qresource>
+</RCC>
