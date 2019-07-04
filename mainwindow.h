@@ -23,6 +23,7 @@ protected:
     void keyReleaseEvent(QKeyEvent *e);
     void contextMenuEvent(QContextMenuEvent *e);
     void mouseDoubleClickEvent(QMouseEvent *e);
+    void wheelEvent(QWheelEvent *e);
 
 private slots:
     void onOpenFile();

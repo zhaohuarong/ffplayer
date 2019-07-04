@@ -64,12 +64,10 @@ void MainWindow::keyReleaseEvent(QKeyEvent *e)
         onFullScreen();
         break;
     case Qt::Key_Left:
-        backward(5 * 1000);
-        //qDebug() << "-----" << _media->duration();
-        //_player->position();
+        backward(10 * 1000);
         break;
     case Qt::Key_Right:
-        forward(5 * 1000);
+        forward(10 * 1000);
         break;
     }
 }
@@ -84,7 +82,13 @@ void MainWindow::contextMenuEvent(QContextMenuEvent *e)
 
 void MainWindow::mouseDoubleClickEvent(QMouseEvent *e)
 {
+    Q_UNUSED(e);
     onFullScreen();
+}
+
+void MainWindow::wheelEvent(QWheelEvent *e)
+{
+    e->delta() > 0 ? forward(5 * 1000) : backward(5 * 1000);
 }
 
 void MainWindow::onOpenFile()
