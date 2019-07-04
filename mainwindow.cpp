@@ -56,6 +56,18 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::openFile(const QString &strFilePath)
+{
+    if(m_pMedia != nullptr)
+    {
+        delete m_pMedia;
+        m_pMedia = nullptr;
+    }
+    m_pMedia = new VlcMedia(strFilePath, true, m_pInstance);
+    m_pPlayer->open(m_pMedia);
+    statusBar()->showMessage(strFilePath);
+}
+
 void MainWindow::keyReleaseEvent(QKeyEvent *e)
 {
     switch(e->key())
@@ -96,9 +108,7 @@ void MainWindow::onOpenFile()
     QString strFileName = QFileDialog::getOpenFileName(this, tr("Select file"), qApp->applicationFilePath());
     if(strFileName.isEmpty())
         return;
-    m_pMedia = new VlcMedia(strFileName, true, m_pInstance);
-    m_pPlayer->open(m_pMedia);
-    statusBar()->showMessage(strFileName);
+    openFile(strFileName);
 }
 
 void MainWindow::onFullScreen()

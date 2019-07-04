@@ -19,6 +19,8 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void openFile(const QString &strFilePath);
+
 protected:
     void keyReleaseEvent(QKeyEvent *e);
     void contextMenuEvent(QContextMenuEvent *e);
