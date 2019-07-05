@@ -1,4 +1,4 @@
-# ffplayer
+# FFPlayer
 VLC-Qt player
 
 https://vlc-qt.tano.si/
