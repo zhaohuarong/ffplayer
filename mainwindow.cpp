@@ -43,6 +43,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionClip_Left->setIcon(QIcon(":/img/clip_left.png"));
     ui->actionClip_Right->setIcon(QIcon(":/img/clip_right.png"));
     ui->action_Clip->setIcon(QIcon(":/img/clip.png"));
+    ui->action_Play->setIcon(QIcon(":/img/play.png"));
+    ui->actionPause->setIcon(QIcon(":/img/pause.png"));
+    ui->action_Stop->setIcon(QIcon(":/img/stop.png"));
 
     ui->video->setMediaPlayer(m_pPlayer);
     ui->volume->setMediaPlayer(m_pPlayer);
@@ -60,6 +63,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->clipToolBar->addWidget(m_pClipLabel);
     ui->clipToolBar->addAction(ui->actionClip_Right);
     ui->clipToolBar->addAction(ui->action_Clip);
+    ui->ctrlToolBar->addAction(ui->action_Play);
+    ui->ctrlToolBar->addAction(ui->actionPause);
+    ui->ctrlToolBar->addAction(ui->action_Stop);
 
     connect(ui->action_Open, SIGNAL(triggered()), this, SLOT(onOpenFile()));
     connect(ui->action_Full_Screen, SIGNAL(triggered()), this, SLOT(onFullScreen()));
@@ -69,6 +75,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->actionClip_Left, SIGNAL(triggered()), this, SLOT(onClipLeft()));
     connect(ui->actionClip_Right, SIGNAL(triggered()), this, SLOT(onClipRight()));
     connect(ui->action_Clip, SIGNAL(triggered()), this, SLOT(onClip()));
+    connect(ui->action_Play, SIGNAL(triggered()), this, SLOT(onPlay()));
+    connect(ui->actionPause, SIGNAL(triggered()), this, SLOT(onPause()));
+    connect(ui->action_Stop, SIGNAL(triggered()), this, SLOT(onStop()));
 }
 
 MainWindow::~MainWindow()
@@ -111,7 +120,7 @@ void MainWindow::keyReleaseEvent(QKeyEvent *e)
     case Qt::Key_Right:
         forward(10 * 1000);
         break;
-    case Qt::Key_1:
+    case Qt::Key_QuoteLeft:
         onGrabImage();
         break;
     case Qt::Key_Comma:
@@ -159,6 +168,8 @@ void MainWindow::onFullScreen()
     if(isFullScreen())
     {
         ui->mainToolBar->show();
+        ui->clipToolBar->show();
+        ui->ctrlToolBar->show();
         ui->menuBar->show();
         //ui->seek->show();
         statusBar()->show();
@@ -168,6 +179,8 @@ void MainWindow::onFullScreen()
     {
         m_bIsMaximized = isMaximized();
         ui->mainToolBar->hide();
+        ui->clipToolBar->hide();
+        ui->ctrlToolBar->hide();
         ui->menuBar->hide();
         //ui->seek->hide();
         statusBar()->hide();
@@ -227,6 +240,27 @@ void MainWindow::onClip()
         //QString strTemp=QString::fromLocal8Bit(p.readAllStandardOutput());
     }
 
+}
+
+void MainWindow::onPlay()
+{
+    if(m_pPlayer->state() != Vlc::Playing)
+    {
+        m_pPlayer->togglePause();
+    }
+}
+
+void MainWindow::onPause()
+{
+    if(m_pPlayer->state() == Vlc::Playing)
+    {
+        m_pPlayer->togglePause();
+    }
+}
+
+void MainWindow::onStop()
+{
+    m_pPlayer->stop();
 }
 
 void MainWindow::backward(int ms)

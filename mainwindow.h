@@ -36,6 +36,9 @@ private slots:
     void onClipLeft();
     void onClipRight();
     void onClip();
+    void onPlay();
+    void onPause();
+    void onStop();
 
 private:
     void backward(int ms);

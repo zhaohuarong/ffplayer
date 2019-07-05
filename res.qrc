@@ -8,5 +8,8 @@
         <file>img/clip_left.png</file>
         <file>img/clip_right.png</file>
         <file>img/clip.png</file>
+        <file>img/pause.png</file>
+        <file>img/play.png</file>
+        <file>img/stop.png</file>
     </qresource>
 </RCC>
