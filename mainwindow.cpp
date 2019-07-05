@@ -1,3 +1,4 @@
+#include <QLabel>
 #include <QDateTime>
 #include <QProcess>
 #include <QDebug>
@@ -22,11 +23,13 @@ MainWindow::MainWindow(QWidget *parent) :
     m_pPlayer(nullptr),
     m_bIsMaximized(false),
     m_clipStartSecond(0),
-    m_clipEndSecond(0)
+    m_clipEndSecond(0),
+    m_pClipLabel(nullptr)
 {
     ui->setupUi(this);
 
     setContextMenuPolicy(Qt::DefaultContextMenu);
+    setWindowTitle(tr("FFPlayer"));
 
     m_pInstance = new VlcInstance(VlcCommon::args(), this);
     m_pPlayer = new VlcMediaPlayer(m_pInstance);
@@ -47,12 +50,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->volume->setVisible(false);
     ui->seek->setMediaPlayer(m_pPlayer);
 
+    m_pClipLabel = new QLabel(this);
+    m_pClipLabel->setText("00:00:00 - 00:00:00");
+
     ui->mainToolBar->addAction(ui->action_Open);
     ui->mainToolBar->addAction(ui->action_Full_Screen);
     ui->mainToolBar->addAction(ui->action_Grab);
-    ui->mainToolBar->addAction(ui->actionClip_Left);
-    ui->mainToolBar->addAction(ui->actionClip_Right);
-    ui->mainToolBar->addAction(ui->action_Clip);
+    ui->clipToolBar->addAction(ui->actionClip_Left);
+    ui->clipToolBar->addWidget(m_pClipLabel);
+    ui->clipToolBar->addAction(ui->actionClip_Right);
+    ui->clipToolBar->addAction(ui->action_Clip);
 
     connect(ui->action_Open, SIGNAL(triggered()), this, SLOT(onOpenFile()));
     connect(ui->action_Full_Screen, SIGNAL(triggered()), this, SLOT(onFullScreen()));
@@ -82,7 +89,7 @@ void MainWindow::openFile(const QString &strFilePath)
     m_strFileName = strFilePath;
     m_pMedia = new VlcMedia(strFilePath, true, m_pInstance);
     m_pPlayer->open(m_pMedia);
-    statusBar()->showMessage(strFilePath);
+    setWindowTitle(strFilePath);
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *e)
@@ -185,19 +192,19 @@ void MainWindow::onGrabImage()
 void MainWindow::onClipLeft()
 {
     m_clipStartSecond = m_pPlayer->position() * m_pMedia->duration() / 1000;
-    qDebug() << "<<<<<<<<<<<<<" << QTime(0, 0, 0).addSecs(m_clipStartSecond);
+    m_pClipLabel->setText(QString("%1 - %2").arg(convertSecondToTimeFormat(m_clipStartSecond)).arg(convertSecondToTimeFormat(m_clipEndSecond)));
 }
 
 void MainWindow::onClipRight()
 {
     m_clipEndSecond = m_pPlayer->position() * m_pMedia->duration() / 1000;
-    qDebug() << ">>>>>>>>>>>>>" << QTime(0, 0, 0).addSecs(m_clipEndSecond);
+    m_pClipLabel->setText(QString("%1 - %2").arg(convertSecondToTimeFormat(m_clipStartSecond)).arg(convertSecondToTimeFormat(m_clipEndSecond)));
 }
 
 void MainWindow::onClip()
 {
-    QString strStartTime = QTime(0, 0, 0).addSecs(m_clipStartSecond).toString("HH:mm:ss");
-    QString strEndTime = QTime(0, 0, 0).addSecs(m_clipEndSecond).toString("HH:mm:ss");
+    QString strStartTime = convertSecondToTimeFormat(m_clipStartSecond);
+    QString strEndTime = convertSecondToTimeFormat(m_clipEndSecond);
 
     QMessageBox box(this);
     box.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
@@ -252,4 +259,9 @@ void MainWindow::grabImage(int s)
     {
         statusBar()->showMessage(tr("Grab success, saved %1").arg(strImagePath));
     }
+}
+
+QString MainWindow::convertSecondToTimeFormat(int second)
+{
+    return QTime(0, 0, 0).addSecs(second).toString("HH:mm:ss");
 }
